@@ -1,38 +1,116 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --card: #ffffff;
-  --border: #e2e8f0;
-  --badge-low: #dcfce7;
-  --badge-mid: #fef3c7;
-  --badge-high: #fee2e2;
+  --background: #07111f;
+  --background-elevated: rgba(14, 24, 41, 0.84);
+  --foreground: #f7fafc;
+  --muted: #9eb2cc;
+  --card: rgba(10, 21, 37, 0.8);
+  --card-strong: rgba(12, 26, 45, 0.96);
+  --border: rgba(136, 164, 198, 0.2);
+  --border-strong: rgba(136, 164, 198, 0.34);
+  --accent: #7cf9b0;
+  --accent-strong: #29d87d;
+  --accent-soft: rgba(124, 249, 176, 0.18);
+  --warning: #f6c760;
+  --danger: #ff6b6b;
+  --shadow: 0 24px 80px rgba(1, 8, 20, 0.5);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #020617;
-    --foreground: #e2e8f0;
-    --muted: #94a3b8;
-    --card: #0f172a;
-    --border: #1e293b;
-    --badge-low: #14532d;
-    --badge-mid: #78350f;
-    --badge-high: #7f1d1d;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(124, 249, 176, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(80, 145, 255, 0.18), transparent 32%),
+    linear-gradient(180deg, #08111f 0%, #060d18 48%, #040912 100%);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
+  min-height: 100%;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(124, 249, 176, 0.12), transparent 24%),
+    radial-gradient(circle at 85% 15%, rgba(58, 130, 246, 0.15), transparent 24%),
+    linear-gradient(180deg, rgba(7, 17, 31, 0.96), rgba(4, 10, 19, 1));
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), sans-serif;
+}
+
+a,
+button,
+input,
+select {
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    opacity 160ms ease;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(124, 249, 176, 0.28);
+  color: white;
+}
+
+.glass-panel {
+  background: linear-gradient(180deg, rgba(17, 32, 55, 0.88), rgba(8, 17, 31, 0.92));
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.display-font {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.surface-grid {
+  position: relative;
+}
+
+.surface-grid::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent 90%);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.soft-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(136, 164, 198, 0.4) transparent;
+}
+
+.soft-scrollbar::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.soft-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(136, 164, 198, 0.35);
 }

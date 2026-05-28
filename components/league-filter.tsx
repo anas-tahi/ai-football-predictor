@@ -19,17 +19,43 @@ export function LeagueFilter({ competitions, selected }: LeagueFilterProps) {
   };
 
   return (
-    <select
-      className="rounded-md border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm"
-      value={selected ?? "all"}
-      onChange={(e) => onChange(e.target.value)}
+    <div
+      aria-label="League filters"
+      className="soft-scrollbar flex gap-2 overflow-x-auto pb-1"
+      role="group"
     >
-      <option value="all">All leagues</option>
-      {competitions.map((c) => (
-        <option key={c.id} value={c.code}>
-          {c.name}
-        </option>
-      ))}
-    </select>
+      <button
+        aria-label="Show all leagues"
+        aria-pressed={!selected}
+        className={`rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap ${
+          !selected
+            ? "border-[var(--accent)] bg-[var(--accent)] text-slate-950"
+            : "border-[var(--border)] bg-white/6 text-white/82 hover:bg-white/10"
+        }`}
+        onClick={() => onChange("all")}
+        type="button"
+      >
+        All leagues
+      </button>
+      {competitions.map((competition) => {
+        const active = selected === competition.code;
+        return (
+          <button
+            key={competition.id}
+            aria-label={`Filter by ${competition.name}`}
+            aria-pressed={active}
+            className={`rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap ${
+              active
+                ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)] shadow-[0_0_30px_rgba(124,249,176,0.12)]"
+                : "border-[var(--border)] bg-white/6 text-white/82 hover:bg-white/10"
+            }`}
+            onClick={() => onChange(competition.code)}
+            type="button"
+          >
+            {competition.code}
+          </button>
+        );
+      })}
+    </div>
   );
 }
