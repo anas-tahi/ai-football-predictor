@@ -20,12 +20,19 @@ async function footballFetch<T>(path: string): Promise<T> {
     throw new Error("FOOTBALL_DATA_API_KEY missing");
   }
 
-  const response = await fetch(`${BASE_URL}${path}`, {
-    headers: {
-      "X-Auth-Token": env.FOOTBALL_DATA_API_KEY!,
-    },
-    next: { revalidate: 60 * 60 },
-  });
+  const execute = async () =>
+    fetch(`${BASE_URL}${path}`, {
+      headers: {
+        "X-Auth-Token": env.FOOTBALL_DATA_API_KEY!,
+      },
+      next: { revalidate: 60 * 60 },
+    });
+
+  let response = await execute();
+  if (response.status === 429) {
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    response = await execute();
+  }
 
   if (!response.ok) {
     throw new Error(`football-data error ${response.status}`);
@@ -57,12 +64,16 @@ function mapMatch(match: FootballDataMatch): Fixture {
 export async function getFixturesByDate(date: string): Promise<Fixture[]> {
   if (!featureFlags.hasFootballApiKey) return [];
 
-  return withCache(cacheKeys.fixtures(date), ttlSeconds.fixtures, async () => {
-    const data = await footballFetch<{ matches: FootballDataMatch[] }>(
-      `/matches?dateFrom=${date}&dateTo=${date}&status=SCHEDULED`,
-    );
-    return data.matches.map(mapMatch);
-  });
+  try {
+    return await withCache(cacheKeys.fixtures(date), ttlSeconds.fixtures, async () => {
+      const data = await footballFetch<{ matches: FootballDataMatch[] }>(
+        `/matches?dateFrom=${date}&dateTo=${date}&status=SCHEDULED`,
+      );
+      return data.matches.map(mapMatch);
+    });
+  } catch {
+    return [];
+  }
 }
 
 export async function getLastMatchesByTeam(teamId: number, limit = 8): Promise<Fixture[]> {
