@@ -12,16 +12,24 @@ const redis = featureFlags.hasRedis
 
 export async function getCached<T>(key: string): Promise<T | null> {
   if (!redis) return null;
-  return (await redis.get<T>(key)) ?? null;
+  try {
+    return (await redis.get<T>(key)) ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export async function setCached(key: string, value: JsonValue, ttlSeconds?: number) {
   if (!redis) return;
-  if (ttlSeconds) {
-    await redis.set(key, value, { ex: ttlSeconds });
+  try {
+    if (ttlSeconds) {
+      await redis.set(key, value, { ex: ttlSeconds });
+      return;
+    }
+    await redis.set(key, value);
+  } catch {
     return;
   }
-  await redis.set(key, value);
 }
 
 export async function withCache<T>(
